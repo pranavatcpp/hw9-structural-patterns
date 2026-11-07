@@ -2,7 +2,8 @@
 
 Java homework demonstrating Flyweight through a text editor and Proxy through
 a song metadata service. The Flyweight factory now shares immutable character
-properties. Document editing, persistence, and the Proxy implementation are pending.
+properties. Documents support text insertion, replacement, deletion, and formatting
+changes. Persistence and the Proxy implementation are pending.
 
 ## Compile and run
 
@@ -15,17 +16,22 @@ java -cp build flyweight.FlyweightDriver
 java -cp build proxy.ProxyDriver
 ```
 
-Run the factory checks:
+Run the factory and document checks:
 
 ```sh
-javac -cp build -d build tests/flyweight/CharacterPropertiesFactoryTest.java
+javac -cp build -d build tests/flyweight/*.java
 java -cp build flyweight.CharacterPropertiesFactoryTest
+java -cp build flyweight.DocumentTest
 ```
 
 Use one `CharacterPropertiesFactory` for characters that should share formatting.
 Matching uses exact font and color strings plus size. The factory retains created
 properties and exposes no deletion operation. Properties are immutable; changing
-a character's formatting will require obtaining another shared property object.
+a character's formatting obtains another shared property object.
+
+`Document` supports `append`, `insert`, `setCharacter`, `format`, and `delete`.
+Range operations use an inclusive start and exclusive end. Indices count Java
+`char` units. Deleting text does not remove formatting objects from the factory.
 
 ## Project structure
 
@@ -40,7 +46,7 @@ a character's formatting will require obtaining another shared property object.
 - [x] Share character property objects for matching font, size, and color.
 - [x] Support the supplied fonts (Arial, Calibri, Verdana), colors (Red, Blue,
       Black), and sizes (12, 14, 16).
-- [ ] Allow document creation and editing with different character properties.
+- [x] Allow document creation and editing with different character properties.
 - [x] Keep created character property objects; do not add property deletion.
 - [ ] Save documents to a file and load them from a file.
 - [ ] Save `HelloWorldCS5800` in the driver with at least four property variations.
@@ -62,8 +68,8 @@ a character's formatting will require obtaining another shared property object.
 ## Implementation checkpoints
 
 1. Project setup and runnable driver placeholders (complete).
-2. Character property flyweight factory (current checkpoint).
-3. Document creation and editing.
+2. Character property flyweight factory (complete).
+3. Document creation and editing (current checkpoint).
 4. Document save and load.
 5. Flyweight demonstration and verification.
 6. Song metadata model and real service.

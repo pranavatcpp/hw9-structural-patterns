@@ -14,6 +14,16 @@ public class FlyweightDriver {
         System.out.println("Third properties: " + third);
         System.out.println("Matching properties share an object: " + (first == repeated));
         System.out.println("Unique property objects: " + factory.getPropertyCount());
-        System.out.println("Document editing and persistence will be implemented next.");
+        Document document = new Document(factory);
+        document.append("Hello", "Arial", 12, "Red");
+        document.append("World", "Calibri", 14, "Blue");
+        document.insert(5, " ", "Arial", 12, "Red");
+        document.setCharacter(0, 'h');
+        document.format(6, 11, "Verdana", 16, "Black");
+        System.out.println("Edited text: " + document.getText());
+        System.out.println("First character shares existing properties: "
+                + (document.getPropertiesAt(0) == first));
+        System.out.println("World formatting: " + document.getPropertiesAt(6));
+        System.out.println("File persistence will be implemented next.");
     }
 }
