@@ -4,7 +4,7 @@ Java homework demonstrating Flyweight through a text editor and Proxy through
 a song metadata service. The Flyweight factory now shares immutable character
 properties. Documents support text insertion, replacement, deletion, and formatting
 changes, plus file save and load. The Flyweight demonstration is complete;
-the Proxy implementation is pending.
+the real song service is implemented and the caching proxy is pending.
 
 ## Compile and run
 
@@ -62,6 +62,20 @@ value, font, size, and color. Loading uses the supplied factory to restore share
 formatting. These methods report file errors and malformed data as `IOException`.
 The binary files are intended to be opened through `Document.load`, not a text editor.
 
+The song driver creates six fictional songs and accesses `RealSongService` through
+the supplied `SongService` interface. Each search takes approximately one second.
+Title and album searches use exact, case-sensitive matches and return all matches
+in library order. Missing IDs return `null`; missing titles or albums return empty
+lists. Null queries also return no matches. Durations are in seconds. The service
+copies the input library and returns independent result lists.
+
+Run the real-service checks (approximately eight seconds):
+
+```sh
+javac -cp build -d build tests/proxy/*.java
+java -cp build proxy.RealSongServiceTest
+```
+
 ## Project structure
 
 - `src/flyweight/`: text editor and shared character properties.
@@ -82,15 +96,15 @@ The binary files are intended to be opened through `Document.load`, not a text e
 
 ### Proxy
 
-- [ ] Model song title, artist, and album as strings and duration as an integer.
-- [ ] Preserve the supplied `SongService` interface methods:
+- [x] Model song title, artist, and album as strings and duration as an integer.
+- [x] Preserve the supplied `SongService` interface methods:
       `Song searchById(Integer songID)`,
       `List<Song> searchByTitle(String title)`, and
       `List<Song> searchByAlbum(String album)`.
 - [ ] Fetch metadata on demand through a proxy and cache it in memory.
-- [ ] Access the metadata through the `SongService` interface.
-- [ ] Populate 5–10 songs and demonstrate all three search methods.
-- [ ] Add the suggested one-second delay to each real-service search method,
+- [x] Access the metadata through the `SongService` interface.
+- [x] Populate 5–10 songs and demonstrate all three search methods.
+- [x] Add the suggested one-second delay to each real-service search method,
       with no artificial delay in the proxy.
 - [ ] Demonstrate repeated searches using the cache. Music playback is not needed.
 
@@ -100,7 +114,7 @@ The binary files are intended to be opened through `Document.load`, not a text e
 2. Character property flyweight factory (complete).
 3. Document creation and editing (complete).
 4. Document save and load (complete).
-5. Flyweight demonstration and verification (current checkpoint).
-6. Song metadata model and real service.
+5. Flyweight demonstration and verification (complete).
+6. Song metadata model and real service (current checkpoint).
 7. Caching proxy and demonstration.
 8. Final verification and run documentation.
