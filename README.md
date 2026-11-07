@@ -1,8 +1,8 @@
 # Structural Design Patterns Part 2
 
 Java homework demonstrating Flyweight through a text editor and Proxy through
-a song metadata service. The initial setup contains runnable placeholder drivers;
-the assignment features below are still pending.
+a song metadata service. The Flyweight factory now shares immutable character
+properties. Document editing, persistence, and the Proxy implementation are pending.
 
 ## Compile and run
 
@@ -15,6 +15,18 @@ java -cp build flyweight.FlyweightDriver
 java -cp build proxy.ProxyDriver
 ```
 
+Run the factory checks:
+
+```sh
+javac -cp build -d build tests/flyweight/CharacterPropertiesFactoryTest.java
+java -cp build flyweight.CharacterPropertiesFactoryTest
+```
+
+Use one `CharacterPropertiesFactory` for characters that should share formatting.
+Matching uses exact font and color strings plus size. The factory retains created
+properties and exposes no deletion operation. Properties are immutable; changing
+a character's formatting will require obtaining another shared property object.
+
 ## Project structure
 
 - `src/flyweight/`: text editor and shared character properties.
@@ -25,11 +37,11 @@ java -cp build proxy.ProxyDriver
 
 ### Flyweight
 
-- [ ] Share character property objects for matching font, size, and color.
-- [ ] Support the supplied fonts (Arial, Calibri, Verdana), colors (Red, Blue,
+- [x] Share character property objects for matching font, size, and color.
+- [x] Support the supplied fonts (Arial, Calibri, Verdana), colors (Red, Blue,
       Black), and sizes (12, 14, 16).
 - [ ] Allow document creation and editing with different character properties.
-- [ ] Keep created character property objects; do not add property deletion.
+- [x] Keep created character property objects; do not add property deletion.
 - [ ] Save documents to a file and load them from a file.
 - [ ] Save `HelloWorldCS5800` in the driver with at least four property variations.
 
@@ -49,8 +61,8 @@ java -cp build proxy.ProxyDriver
 
 ## Implementation checkpoints
 
-1. Project setup and runnable driver placeholders (current checkpoint).
-2. Character property flyweight factory.
+1. Project setup and runnable driver placeholders (complete).
+2. Character property flyweight factory (current checkpoint).
 3. Document creation and editing.
 4. Document save and load.
 5. Flyweight demonstration and verification.
