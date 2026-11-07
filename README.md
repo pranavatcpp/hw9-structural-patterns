@@ -3,7 +3,8 @@
 Java homework demonstrating Flyweight through a text editor and Proxy through
 a song metadata service. The Flyweight factory now shares immutable character
 properties. Documents support text insertion, replacement, deletion, and formatting
-changes. Persistence and the Proxy implementation are pending.
+changes, plus file save and load. The final Flyweight demonstration and Proxy
+implementation are pending.
 
 ## Compile and run
 
@@ -22,6 +23,7 @@ Run the factory and document checks:
 javac -cp build -d build tests/flyweight/*.java
 java -cp build flyweight.CharacterPropertiesFactoryTest
 java -cp build flyweight.DocumentTest
+java -cp build flyweight.DocumentPersistenceTest
 ```
 
 Use one `CharacterPropertiesFactory` for characters that should share formatting.
@@ -32,6 +34,13 @@ a character's formatting obtains another shared property object.
 `Document` supports `append`, `insert`, `setCharacter`, `format`, and `delete`.
 Range operations use an inclusive start and exclusive end. Indices count Java
 `char` units. Deleting text does not remove formatting objects from the factory.
+
+Save with `document.save(path)` and load with `Document.load(path, factory)`,
+where `path` is a `java.nio.file.Path`. Saving replaces an existing file. The
+binary format contains a version header, a character count, and each character's
+value, font, size, and color. Loading uses the supplied factory to restore shared
+formatting. These methods report file errors and malformed data as `IOException`.
+The binary files are intended to be opened through `Document.load`, not a text editor.
 
 ## Project structure
 
@@ -48,7 +57,7 @@ Range operations use an inclusive start and exclusive end. Indices count Java
       Black), and sizes (12, 14, 16).
 - [x] Allow document creation and editing with different character properties.
 - [x] Keep created character property objects; do not add property deletion.
-- [ ] Save documents to a file and load them from a file.
+- [x] Save documents to a file and load them from a file.
 - [ ] Save `HelloWorldCS5800` in the driver with at least four property variations.
 
 ### Proxy
@@ -69,8 +78,8 @@ Range operations use an inclusive start and exclusive end. Indices count Java
 
 1. Project setup and runnable driver placeholders (complete).
 2. Character property flyweight factory (complete).
-3. Document creation and editing (current checkpoint).
-4. Document save and load.
+3. Document creation and editing (complete).
+4. Document save and load (current checkpoint).
 5. Flyweight demonstration and verification.
 6. Song metadata model and real service.
 7. Caching proxy and demonstration.

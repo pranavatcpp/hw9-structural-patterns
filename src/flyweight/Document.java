@@ -1,11 +1,19 @@
 package flyweight;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 /** Editable text whose characters refer to shared, immutable formatting. */
 public final class Document {
+    private static final String FILE_HEADER = "CS5800-DOCUMENT-1";
     private final CharacterPropertiesFactory factory;
     private final List<CharacterEntry> characters = new ArrayList<>();
 
@@ -65,6 +73,53 @@ public final class Document {
     public void delete(int start, int end) {
         checkRange(start, end);
         characters.subList(start, end).clear();
+    }
+
+    /** Saves text and formatting in the versioned binary document format. */
+    public void save(Path path) throws IOException {
+        try (DataOutputStream output = new DataOutputStream(
+                new BufferedOutputStream(Files.newOutputStream(path)))) {
+            output.writeUTF(FILE_HEADER);
+            output.writeInt(length());
+            for (CharacterEntry character : characters) {
+                output.writeChar(character.value);
+                output.writeUTF(character.properties.getFont());
+                output.writeInt(character.properties.getSize());
+                output.writeUTF(character.properties.getColor());
+            }
+        }
+    }
+
+    /** Loads a new document, resolving every format through the supplied factory. */
+    public static Document load(Path path, CharacterPropertiesFactory factory) throws IOException {
+        Objects.requireNonNull(factory, "Factory must not be null.");
+        Document loaded = new Document(factory);
+        try (DataInputStream input = new DataInputStream(
+                new BufferedInputStream(Files.newInputStream(path)))) {
+            if (!FILE_HEADER.equals(input.readUTF())) {
+                throw new IOException("Unsupported document format.");
+            }
+            int count = input.readInt();
+            if (count < 0) {
+                throw new IOException("Invalid character count.");
+            }
+            for (int i = 0; i < count; i++) {
+                char value = input.readChar();
+                String font = input.readUTF();
+                int size = input.readInt();
+                String color = input.readUTF();
+                try {
+                    CharacterProperties properties = factory.getProperties(font, size, color);
+                    loaded.characters.add(new CharacterEntry(value, properties));
+                } catch (IllegalArgumentException invalidProperties) {
+                    throw new IOException("Invalid formatting at character " + i, invalidProperties);
+                }
+            }
+            if (input.read() != -1) {
+                throw new IOException("Unexpected data after document contents.");
+            }
+        }
+        return loaded;
     }
 
     private void checkRange(int start, int end) {

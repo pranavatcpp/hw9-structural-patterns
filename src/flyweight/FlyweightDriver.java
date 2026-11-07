@@ -24,6 +24,6 @@ public class FlyweightDriver {
         System.out.println("First character shares existing properties: "
                 + (document.getPropertiesAt(0) == first));
         System.out.println("World formatting: " + document.getPropertiesAt(6));
-        System.out.println("File persistence will be implemented next.");
+        System.out.println("Save/load is available; the full file demonstration comes next.");
     }
 }
