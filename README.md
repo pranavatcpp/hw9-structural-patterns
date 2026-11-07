@@ -3,8 +3,8 @@
 Java homework demonstrating Flyweight through a text editor and Proxy through
 a song metadata service. The Flyweight factory now shares immutable character
 properties. Documents support text insertion, replacement, deletion, and formatting
-changes, plus file save and load. The final Flyweight demonstration and Proxy
-implementation are pending.
+changes, plus file save and load. The Flyweight demonstration is complete;
+the Proxy implementation is pending.
 
 ## Compile and run
 
@@ -17,6 +17,25 @@ java -cp build flyweight.FlyweightDriver
 java -cp build proxy.ProxyDriver
 ```
 
+The Flyweight driver demonstrates text and formatting edits, then saves exactly
+`HelloWorldCS5800` to `build/hello-world.bin`. It reloads the file with a fresh
+factory and prints the text, formatting, and identity-sharing checks. The 16
+characters share four property objects:
+
+| Text | Font | Size | Color |
+| --- | --- | --- | --- |
+| Hello | Arial | 12 | Red |
+| World | Calibri | 14 | Blue |
+| CS | Verdana | 16 | Black |
+| 5800 | Arial | 16 | Blue |
+
+An optional first argument selects a different output file (existing files are
+overwritten):
+
+```sh
+java -cp build flyweight.FlyweightDriver build/custom-document.bin
+```
+
 Run the factory and document checks:
 
 ```sh
@@ -24,6 +43,7 @@ javac -cp build -d build tests/flyweight/*.java
 java -cp build flyweight.CharacterPropertiesFactoryTest
 java -cp build flyweight.DocumentTest
 java -cp build flyweight.DocumentPersistenceTest
+java -cp build flyweight.FlyweightDriverTest
 ```
 
 Use one `CharacterPropertiesFactory` for characters that should share formatting.
@@ -58,7 +78,7 @@ The binary files are intended to be opened through `Document.load`, not a text e
 - [x] Allow document creation and editing with different character properties.
 - [x] Keep created character property objects; do not add property deletion.
 - [x] Save documents to a file and load them from a file.
-- [ ] Save `HelloWorldCS5800` in the driver with at least four property variations.
+- [x] Save `HelloWorldCS5800` in the driver with at least four property variations.
 
 ### Proxy
 
@@ -79,8 +99,8 @@ The binary files are intended to be opened through `Document.load`, not a text e
 1. Project setup and runnable driver placeholders (complete).
 2. Character property flyweight factory (complete).
 3. Document creation and editing (complete).
-4. Document save and load (current checkpoint).
-5. Flyweight demonstration and verification.
+4. Document save and load (complete).
+5. Flyweight demonstration and verification (current checkpoint).
 6. Song metadata model and real service.
 7. Caching proxy and demonstration.
 8. Final verification and run documentation.

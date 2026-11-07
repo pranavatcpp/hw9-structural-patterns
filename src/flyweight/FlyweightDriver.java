@@ -1,29 +1,48 @@
 package flyweight;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 /** Entry point for the Flyweight text editor demonstration. */
 public class FlyweightDriver {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        Path output = Paths.get(args.length > 0 ? args[0] : "build/hello-world.bin");
         CharacterPropertiesFactory factory = new CharacterPropertiesFactory();
-        CharacterProperties first = factory.getProperties("Arial", 12, "Red");
-        CharacterProperties repeated = factory.getProperties("Arial", 12, "Red");
-        CharacterProperties second = factory.getProperties("Calibri", 14, "Blue");
-        CharacterProperties third = factory.getProperties("Verdana", 16, "Black");
-
-        System.out.println("First properties: " + first);
-        System.out.println("Second properties: " + second);
-        System.out.println("Third properties: " + third);
-        System.out.println("Matching properties share an object: " + (first == repeated));
-        System.out.println("Unique property objects: " + factory.getPropertyCount());
         Document document = new Document(factory);
-        document.append("Hello", "Arial", 12, "Red");
+        document.append("hello", "Arial", 12, "Red");
         document.append("World", "Calibri", 14, "Blue");
-        document.insert(5, " ", "Arial", 12, "Red");
-        document.setCharacter(0, 'h');
-        document.format(6, 11, "Verdana", 16, "Black");
+        document.append("5800", "Arial", 12, "Red");
+        System.out.println("Before editing: " + document.getText());
+
+        document.setCharacter(0, 'H');
+        document.insert(10, "CS", "Verdana", 16, "Black");
+        document.format(12, 16, "Arial", 16, "Blue");
         System.out.println("Edited text: " + document.getText());
-        System.out.println("First character shares existing properties: "
-                + (document.getPropertiesAt(0) == first));
-        System.out.println("World formatting: " + document.getPropertiesAt(6));
-        System.out.println("Save/load is available; the full file demonstration comes next.");
+
+        Files.createDirectories(output.toAbsolutePath().getParent());
+        document.save(output);
+        System.out.println("Saved to: " + output.toAbsolutePath());
+
+        // A fresh factory demonstrates rebuilding sharing from disk.
+        CharacterPropertiesFactory loadedFactory = new CharacterPropertiesFactory();
+        Document loaded = Document.load(output, loadedFactory);
+        System.out.println("Loaded text: " + loaded.getText());
+        printFormatting(loaded, 0, 5);
+        printFormatting(loaded, 5, 10);
+        printFormatting(loaded, 10, 12);
+        printFormatting(loaded, 12, 16);
+        System.out.println("Characters: " + loaded.length());
+        System.out.println("Unique shared property objects: " + loadedFactory.getPropertyCount());
+        System.out.println("H and e share the same property object: "
+                + (loaded.getPropertiesAt(0) == loaded.getPropertiesAt(1)));
+        System.out.println("Repeated factory lookup reuses loaded properties: "
+                + (loaded.getPropertiesAt(0) == loadedFactory.getProperties("Arial", 12, "Red")));
+    }
+
+    private static void printFormatting(Document document, int start, int end) {
+        System.out.println(document.getText().substring(start, end) + ": "
+                + document.getPropertiesAt(start));
     }
 }
